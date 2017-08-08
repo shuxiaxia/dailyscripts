@@ -1,2 +1,2 @@
 # dailyscripts
-日常脚本
+日常脚本总结
