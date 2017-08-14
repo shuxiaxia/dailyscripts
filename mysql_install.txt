@@ -1,0 +1,82 @@
+软件包：
+
+cmake-2.8.8.tar.gz
+mysql-5.5.32.tar.gz
+
+安装cmake
+
+yum install -y gcc gcc-c++
+tar xf cmake-2.8.8.tar.gz
+cd cmake-2.8.8
+./configure
+gmake
+gmake install
+
+安装mysql
+
+yum install ncurses-devel bison -y
+useradd mysql -s /sbin/nologin -M
+tar xf mysql-5.5.32.tar.gz
+cd mysql-5.5.32
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql-5.5.32 \
+-DMYSQL_DATADIR=/usr/local/mysql-5.5.32/data \
+-DMYSQL_UNIX_ADDR=/usr/local/mysql-5.5.32/tmp/mysql.sock \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DEXTRA_CHARSETS=gbk,gb2312,utf8,ascii \
+-DENABLED_LOCAL_INFILE=ON \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_FEDERATED_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 \
+-DWITHOUT_PARTITION_STORAGE_ENGINE=1 \
+-DWITH_FAST_MUTEXES=1 \
+-DWITH_ZLIB=bundled \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_READLINE=1 \
+-DWITH_EMBEDDED_SERVER=1 \
+-DWITH_DEBUG=0
+make
+make install
+ln -s /usr/local/mysql-5.5.32 /usr/local/mysql
+
+选择配置文件
+/bin/cp support-files/my-small.cnf /etc/my.cnf
+
+测试环境选小的，生产环境可以根据硬件选择，例如my-innodb-heavy-4G.cnf
+
+配置环境变量
+
+echo "export PATH=/usr/local/mysql/bin:$PATH" >> /etc/profile
+source /etc/profile
+初始化数据文件
+chown -R mysql.mysql /usr/local/mysql/data
+chmod -R 1777 /tmp
+
+cd /usr/local/mysql/scripts/
+./mysql_install_db --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --user=mysql
+
+cd 到源码包目录 mysql-5.5.32
+
+/bin/cp support-files/mysql.server /etc/init.d/mysqld
+chmod +x /etc/init.d/mysqld
+chkconfig mysqld on
+chkconfig --list mysqld
+/etc/init.d/mysqld start
+
+lsof -i :3306
+
+/usr/local/mysql/bin/mysqladmin -u root password 'roshan'
+mysql -uroot -proshan
+select user,host from mysql.user;
+
+优化
+delete from mysql.user where user='';
+delete from mysql.user where host='roshan';
+delete from mysql.user where host='::1';
+drop database test;
+或者
+detete from mysql.user;
+grant all privileges on *.* system@'localhost' identified by 'roshan' with grant option;
+
+
