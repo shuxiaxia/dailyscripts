@@ -10,7 +10,7 @@
 import json
 import sys
 import os
-import time
+import datetime
 
 pwd_dir = sys.path[0]
 os.chdir(pwd_dir)
@@ -25,10 +25,18 @@ def load_file():
 def judgment(datestr, base_dic): 
     '''返回状态码'''
 
+    week = datetime.datetime.strptime(datestr, '%Y-%m-%d').weekday()
     if datestr in base_dic.keys():
-        return base_dic[datestr]
+        if base_dic[datestr] == "1":
+            return 0
+        else:
+            return 1
     else:
-        return 3
+        if week in [5, 6]:
+            return 0
+        else:
+            return 1
+     
 
 def main(datestr):
     base_dic = load_file()
@@ -37,12 +45,16 @@ def main(datestr):
     return status_code
 
 def usage():
-    return  "Usage:\neg: holiday_status.main('2017-10-01')\n返回 1 表示当天为节假日\n返回 2 表示当天为调休上班\n返回 3 表示正常日期"
+    return  "Usage:\neg: holiday_status.main('2017-10-01')\n返回 0 表示当天为休息日\n返回 1 表示当天为工作日"
     
 
 if __name__ == '__main__':
-    current_time = time.strftime("%Y-%m-%d",time.localtime())
-    print "当前日期为", current_time
-    print main(current_time)
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d')
+    #print "当前日期为", current_time
+    print current_time, main(current_time)
+    print "2017-09-09", main('2017-09-09')
+    print "2017-09-30", main('2017-09-30')
+    print "2017-10-01", main('2017-10-01')
+    print "2017-10-08", main('2017-10-08')
     print usage()
     
