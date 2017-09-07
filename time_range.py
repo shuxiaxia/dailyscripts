@@ -12,10 +12,10 @@ import time
 import datetime
 
 
-def alert_range(current_timestamp):
+def alert_range(current_timestamp, start, stop):
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    start_time = datetime.datetime.strptime(today + " 00", "%Y-%m-%d %H")
-    stop_time = datetime.datetime.strptime(today + " 08", "%Y-%m-%d %H")
+    start_time = datetime.datetime.strptime(today + " " +start, "%Y-%m-%d %H")
+    stop_time = datetime.datetime.strptime(today + " " +stop, "%Y-%m-%d %H")
 
 
     start_timestamp = int(time.mktime(start_time.timetuple()))
@@ -28,4 +28,4 @@ def alert_range(current_timestamp):
 
 
 current_timestamp = int(time.time())
-print(alert_range(current_timestamp))
+print(alert_range(current_timestamp, '00', '08'))
